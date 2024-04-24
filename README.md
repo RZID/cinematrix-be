@@ -21,7 +21,7 @@ To get started with Cinematrix, follow these steps:
 1. Clone this repository
 2. Install Dependencies
    ```bash
-   cd cinematrix
+   cd cinematrix-be
    npm install # pnpm install | yarn add
    ```
 3. Configure environment variables:
