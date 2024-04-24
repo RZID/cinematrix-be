@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN 
+  USER
+}
+
+enum MediaType {
+  PHOTO 
+  VIDEO
+}
+
+model Group {
+  id        Int     @id     @default(autoincrement())
+
+  Users      User[]
+  Movie      Movie[]
+}
+
+model User {
+  id        Int     @id     @default(autoincrement())
+  uid       String  @unique @default(uuid())
+
+  username  String  @unique
+  name      String?
+  password  String
+  role      Role     @default(USER)
+
+  groupId   Int
+  Group     Group    @relation(fields: [groupId], references: [id])
+
+  @@map("users")
+}
+
+model Movie {
+  id            Int     @id     @default(autoincrement())
+  uid           String  @unique @default(uuid())
+
+  title         String
+  description   String  @db.Text()
+  rating        Float
+  releaseDate   DateTime
+
+  groupId       Int
+  Group         Group    @relation(fields: [groupId], references: [id])
+
+  Media         MovieMedia[]
+
+  @@map("movies")
+}
+
+model MovieMedia {
+  id        Int     @id     @default(autoincrement())
+  uid       String  @unique @default(uuid())
+
+  fileUrl   String
+  altName   String
+
+  movieId   Int
+  movie     Movie   @relation(fields: [movieId], references: [id])
+
+  type      MediaType   @default(PHOTO)
+  isBanner  Boolean @default(true)
+
+  @@map("movie_media")
+}
